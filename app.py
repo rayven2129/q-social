@@ -33,11 +33,20 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_dummy
 
 # Initialize extensions
 from extensions import db, login_manager
+from flask_cors import CORS
+
 db.init_app(app)
 login_manager.init_app(app)
 
+# Enable CORS for API endpoints
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 # Import models and routes after app initialization
 from models import User, Product, Category, CartItem, Order, OrderItem
+
+# Initialize API
+from api_routes import api
+api.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -358,6 +367,11 @@ def admin():
     
     return render_template('admin.html', products=products, orders=orders, stats=stats)
 
+@app.route('/api-docs')
+def api_documentation():
+    """API documentation page."""
+    return render_template('api_docs.html')
+
 @app.errorhandler(404)
 def not_found_error(error):
     """Handle 404 errors."""
@@ -376,6 +390,8 @@ if __name__ == '__main__':
     print("🚀 Starting E-Commerce Platform...")
     print("📁 Database:", app.config['SQLALCHEMY_DATABASE_URI'])
     print("🌐 Server: http://localhost:5000")
+    print("📚 API Documentation: http://localhost:5000/api/docs/")
+    print("🔧 API Base URL: http://localhost:5000/api/v1")
     print("👤 Test accounts:")
     print("   Admin: admin / admin123")
     print("   User:  testuser / test123")

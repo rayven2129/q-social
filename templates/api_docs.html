@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🚀 E-Commerce API Documentation</h1>
+            
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Interactive API Documentation</h5>
+                <p class="mb-2">Access the full interactive Swagger UI documentation:</p>
+                <a href="/api/docs/" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Open Swagger UI
+                </a>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-box"></i> Products API</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Manage and browse products</p>
+                            <ul class="list-unstyled">
+                                <li><code>GET /api/v1/products/</code> - List all products</li>
+                                <li><code>GET /api/v1/products/{id}</code> - Get product details</li>
+                            </ul>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testAPI('/api/v1/products/')">
+                                Test Products API
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-tags"></i> Categories API</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Browse product categories</p>
+                            <ul class="list-unstyled">
+                                <li><code>GET /api/v1/categories/</code> - List categories</li>
+                                <li><code>GET /api/v1/categories/{id}</code> - Get category details</li>
+                            </ul>
+                            <button class="btn btn-sm btn-outline-primary" onclick="testAPI('/api/v1/categories/')">
+                                Test Categories API
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shopping-cart"></i> Cart API</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Shopping cart management (requires login)</p>
+                            <ul class="list-unstyled">
+                                <li><code>GET /api/v1/cart/</code> - Get cart items</li>
+                                <li><code>POST /api/v1/cart/</code> - Add to cart</li>
+                                <li><code>PUT /api/v1/cart/{id}</code> - Update cart item</li>
+                            </ul>
+                            {% if current_user.is_authenticated %}
+                            <button class="btn btn-sm btn-outline-primary" onclick="testAPI('/api/v1/cart/')">
+                                Test Cart API
+                            </button>
+                            {% else %}
+                            <p class="text-muted"><small>Login required to test cart API</small></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-receipt"></i> Orders API</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Order management (requires login)</p>
+                            <ul class="list-unstyled">
+                                <li><code>GET /api/v1/orders/</code> - List user orders</li>
+                                <li><code>GET /api/v1/orders/{id}</code> - Get order details</li>
+                            </ul>
+                            {% if current_user.is_authenticated %}
+                            <button class="btn btn-sm btn-outline-primary" onclick="testAPI('/api/v1/orders/')">
+                                Test Orders API
+                            </button>
+                            {% else %}
+                            <p class="text-muted"><small>Login required to test orders API</small></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-heartbeat"></i> Health Check</h5>
+                </div>
+                <div class="card-body">
+                    <p>Check API status</p>
+                    <button class="btn btn-success" onclick="testAPI('/api/v1/health')">
+                        <i class="fas fa-check"></i> Test Health Check
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-terminal"></i> API Response</h5>
+                </div>
+                <div class="card-body">
+                    <pre id="apiResponse" class="bg-light p-3" style="min-height: 200px; border-radius: 5px;">
+Click any "Test API" button above to see the response here...
+                    </pre>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>📖 API Usage Examples</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>JavaScript/Fetch</h5>
+                        <pre class="bg-dark text-light p-3"><code>// Get all products
+fetch('/api/v1/products/')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Add to cart (requires authentication)
+fetch('/api/v1/cart/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    product_id: 1,
+    quantity: 2
+  })
+});</code></pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>cURL</h5>
+                        <pre class="bg-dark text-light p-3"><code># Get all products
+curl -X GET http://localhost:5000/api/v1/products/
+
+# Get categories
+curl -X GET http://localhost:5000/api/v1/categories/
+
+# Health check
+curl -X GET http://localhost:5000/api/v1/health</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function testAPI(endpoint) {
+    const responseElement = document.getElementById('apiResponse');
+    responseElement.textContent = 'Loading...';
+    
+    try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        
+        responseElement.textContent = JSON.stringify(data, null, 2);
+        responseElement.className = 'bg-light p-3 text-success';
+    } catch (error) {
+        responseElement.textContent = `Error: ${error.message}`;
+        responseElement.className = 'bg-light p-3 text-danger';
+    }
+}
+</script>
+{% endblock %}

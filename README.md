@@ -120,6 +120,71 @@ python sqlite_browser.py browse products 20  # Browse products (limit 20)
 - **Production**: Configure via `DATABASE_URL` environment variable
 - **Backups**: Stored in `backups/` directory with timestamps
 
+## API Documentation
+
+The platform includes a comprehensive REST API with interactive Swagger documentation.
+
+### API Features
+
+- **Interactive Documentation**: Full Swagger UI at `/api/docs/`
+- **RESTful Endpoints**: Standard REST API design
+- **Authentication**: Session-based authentication for protected endpoints
+- **CORS Support**: Cross-origin requests enabled for API endpoints
+- **JSON Responses**: All API responses in JSON format
+
+### API Endpoints
+
+#### Public Endpoints
+- `GET /api/v1/products/` - List all products with filtering
+- `GET /api/v1/products/{id}` - Get product details
+- `GET /api/v1/categories/` - List all categories
+- `GET /api/v1/categories/{id}` - Get category details
+- `GET /api/v1/health` - API health check
+
+#### Protected Endpoints (require login)
+- `GET /api/v1/cart/` - Get user's cart items
+- `POST /api/v1/cart/` - Add item to cart
+- `PUT /api/v1/cart/{id}` - Update cart item
+- `DELETE /api/v1/cart/{id}` - Remove cart item
+- `GET /api/v1/orders/` - List user's orders
+- `GET /api/v1/orders/{id}` - Get order details
+- `GET /api/v1/auth/profile` - Get user profile
+- `POST /api/v1/payment/create-intent` - Create Stripe payment intent
+
+### API Access
+
+1. **Web Interface**: Visit `/api-docs` for user-friendly API testing
+2. **Swagger UI**: Access full documentation at `/api/docs/`
+3. **Direct API**: Base URL is `/api/v1/`
+
+### Example Usage
+
+```javascript
+// Get all products
+fetch('/api/v1/products/')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Add to cart (requires authentication)
+fetch('/api/v1/cart/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    product_id: 1,
+    quantity: 2
+  })
+});
+```
+
+```bash
+# cURL examples
+curl -X GET http://localhost:5000/api/v1/products/
+curl -X GET http://localhost:5000/api/v1/categories/
+curl -X GET http://localhost:5000/api/v1/health
+```
+
 ## Configuration
 
 ### Environment Variables
