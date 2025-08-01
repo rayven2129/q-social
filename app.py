@@ -34,45 +34,12 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_dummy
 # Initialize extensions
 from extensions import db, login_manager
 from flask_cors import CORS
-from flasgger import Swagger
 
 db.init_app(app)
 login_manager.init_app(app)
 
 # Enable CORS for API endpoints
 CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-# Initialize Swagger
-swagger_config = {
-    "headers": [],
-    "specs": [
-        {
-            "endpoint": 'apispec',
-            "route": '/apispec.json',
-            "rule_filter": lambda rule: True,
-            "model_filter": lambda tag: True,
-        }
-    ],
-    "static_url_path": "/flasgger_static",
-    "swagger_ui": True,
-    "specs_route": "/api/docs/"
-}
-
-swagger_template = {
-    "swagger": "2.0",
-    "info": {
-        "title": "E-Commerce Platform API",
-        "description": "A comprehensive e-commerce API with product catalog, cart management, and order processing",
-        "version": "1.0.0"
-    },
-    "host": "localhost:5000",
-    "basePath": "/api/v1",
-    "schemes": ["http", "https"],
-    "consumes": ["application/json"],
-    "produces": ["application/json"]
-}
-
-swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 # Import models and routes after app initialization
 from models import User, Product, Category, CartItem, Order, OrderItem
