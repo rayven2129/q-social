@@ -372,6 +372,11 @@ def api_documentation():
     """API documentation page."""
     return render_template('api_docs.html')
 
+@app.route('/api-test')
+def api_test_interface():
+    """Interactive API testing interface."""
+    return render_template('api_test_interface.html')
+
 @app.errorhandler(404)
 def not_found_error(error):
     """Handle 404 errors."""
@@ -390,7 +395,8 @@ if __name__ == '__main__':
     print("🚀 Starting E-Commerce Platform...")
     print("📁 Database:", app.config['SQLALCHEMY_DATABASE_URI'])
     print("🌐 Server: http://localhost:5000")
-    print("📚 API Documentation: http://localhost:5000/api/docs/")
+    print("📚 API Documentation: http://localhost:5000/api/v1/docs/")
+    print("🧪 Interactive API Testing: http://localhost:5000/api-test")
     print("🔧 API Base URL: http://localhost:5000/api/v1")
     print("👤 Test accounts:")
     print("   Admin: admin / admin123")

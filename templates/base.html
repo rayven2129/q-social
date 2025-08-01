@@ -28,10 +28,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('products') }}">Products</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('api_documentation') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="apiDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-code"></i> API
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('api_documentation') }}">
+                                <i class="fas fa-book"></i> Documentation
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('api_test_interface') }}">
+                                <i class="fas fa-flask"></i> Interactive Testing
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/api/v1/docs/" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Simple Docs
+                            </a></li>
+                        </ul>
                     </li>
                 </ul>
                 

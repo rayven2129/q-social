@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+
+{% block title %}API Testing Interface{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🧪 Interactive API Testing Interface</h1>
+            
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> How to Use</h5>
+                <p class="mb-0">Select an endpoint, modify parameters if needed, and click "Send Request" to test the API.</p>
+            </div>
+
+            <!-- API Endpoint Selector -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-cog"></i> API Endpoint Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="httpMethod" class="form-label">Method</label>
+                            <select id="httpMethod" class="form-select">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="apiEndpoint" class="form-label">Endpoint</label>
+                            <select id="apiEndpoint" class="form-select">
+                                <optgroup label="Public Endpoints">
+                                    <option value="/api/v1/health">Health Check</option>
+                                    <option value="/api/v1/products/">Get All Products</option>
+                                    <option value="/api/v1/products/1">Get Product by ID</option>
+                                    <option value="/api/v1/categories/">Get All Categories</option>
+                                    <option value="/api/v1/categories/1">Get Category by ID</option>
+                                </optgroup>
+                                <optgroup label="Protected Endpoints (Login Required)">
+                                    <option value="/api/v1/cart/">Get Cart Items</option>
+                                    <option value="/api/v1/cart/" data-method="POST">Add to Cart</option>
+                                    <option value="/api/v1/cart/1" data-method="PUT">Update Cart Item</option>
+                                    <option value="/api/v1/cart/1" data-method="DELETE">Remove Cart Item</option>
+                                    <option value="/api/v1/orders/">Get Orders</option>
+                                    <option value="/api/v1/orders/1">Get Order by ID</option>
+                                    <option value="/api/v1/auth/profile">Get User Profile</option>
+                                    <option value="/api/v1/payment/create-intent" data-method="POST">Create Payment Intent</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button id="sendRequest" class="btn btn-primary d-block w-100">
+                                <i class="fas fa-paper-plane"></i> Send Request
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Parameters -->
+            <div class="card mb-4" id="queryParamsCard" style="display: none;">
+                <div class="card-header">
+                    <h6><i class="fas fa-filter"></i> Query Parameters</h6>
+                </div>
+                <div class="card-body">
+                    <div id="queryParams">
+                        <!-- Dynamic query parameters will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addQueryParam()">
+                        <i class="fas fa-plus"></i> Add Parameter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Request Body -->
+            <div class="card mb-4" id="requestBodyCard" style="display: none;">
+                <div class="card-header">
+                    <h6><i class="fas fa-code"></i> Request Body (JSON)</h6>
+                </div>
+                <div class="card-body">
+                    <textarea id="requestBody" class="form-control" rows="6" placeholder='{"key": "value"}'></textarea>
+                    <small class="form-text text-muted">Enter valid JSON for POST/PUT requests</small>
+                </div>
+            </div>
+
+            <!-- Response -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-terminal"></i> API Response</h5>
+                    <div>
+                        <span id="responseStatus" class="badge bg-secondary">Ready</span>
+                        <span id="responseTime" class="badge bg-info ms-2" style="display: none;"></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="responseHeaders" class="mb-3" style="display: none;">
+                        <h6>Response Headers:</h6>
+                        <pre id="responseHeadersContent" class="bg-light p-2 small"></pre>
+                    </div>
+                    <pre id="apiResponse" class="bg-dark text-light p-3" style="min-height: 300px; border-radius: 5px; overflow-x: auto;">
+Click "Send Request" to test an API endpoint...
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Quick Examples -->
+            <div class="mt-4">
+                <h3>🚀 Quick Test Examples</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Health Check</h6>
+                                <p class="small">Test if the API is running</p>
+                                <button class="btn btn-sm btn-success" onclick="quickTest('/api/v1/health', 'GET')">
+                                    Test Health
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Get Products</h6>
+                                <p class="small">Fetch all products</p>
+                                <button class="btn btn-sm btn-primary" onclick="quickTest('/api/v1/products/', 'GET')">
+                                    Test Products
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Get Categories</h6>
+                                <p class="small">Fetch all categories</p>
+                                <button class="btn btn-sm btn-info" onclick="quickTest('/api/v1/categories/', 'GET')">
+                                    Test Categories
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if current_user.is_authenticated %}
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Get Cart</h6>
+                                <p class="small">Your cart items</p>
+                                <button class="btn btn-sm btn-warning" onclick="quickTest('/api/v1/cart/', 'GET')">
+                                    Test Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Add to Cart</h6>
+                                <p class="small">Add product to cart</p>
+                                <button class="btn btn-sm btn-success" onclick="quickTestAddToCart()">
+                                    Test Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>User Profile</h6>
+                                <p class="small">Your profile info</p>
+                                <button class="btn btn-sm btn-secondary" onclick="quickTest('/api/v1/auth/profile', 'GET')">
+                                    Test Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-lock"></i> <strong>Login required</strong> to test protected endpoints (Cart, Orders, Profile).
+                    <a href="{{ url_for('login') }}" class="btn btn-sm btn-primary ms-2">Login</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// API Testing Interface JavaScript
+let requestStartTime;
+
+// Update method when endpoint changes
+document.getElementById('apiEndpoint').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const method = selectedOption.getAttribute('data-method') || 'GET';
+    document.getElementById('httpMethod').value = method;
+    updateUIForMethod();
+    updateQueryParams();
+});
+
+// Update UI when method changes
+document.getElementById('httpMethod').addEventListener('change', updateUIForMethod);
+
+function updateUIForMethod() {
+    const method = document.getElementById('httpMethod').value;
+    const requestBodyCard = document.getElementById('requestBodyCard');
+    
+    if (method === 'POST' || method === 'PUT') {
+        requestBodyCard.style.display = 'block';
+        updateRequestBodyExample();
+    } else {
+        requestBodyCard.style.display = 'none';
+    }
+    
+    updateQueryParams();
+}
+
+function updateQueryParams() {
+    const endpoint = document.getElementById('apiEndpoint').value;
+    const queryParamsCard = document.getElementById('queryParamsCard');
+    const queryParamsDiv = document.getElementById('queryParams');
+    
+    // Clear existing params
+    queryParamsDiv.innerHTML = '';
+    
+    // Show query params for GET requests to products
+    if (endpoint === '/api/v1/products/' && document.getElementById('httpMethod').value === 'GET') {
+        queryParamsCard.style.display = 'block';
+        addQueryParam('category', 'Filter by category ID (optional)');
+        addQueryParam('search', 'Search by name or description (optional)');
+        addQueryParam('limit', 'Limit number of results (optional)');
+    } else {
+        queryParamsCard.style.display = 'none';
+    }
+}
+
+function addQueryParam(name = '', placeholder = 'Parameter value') {
+    const queryParamsDiv = document.getElementById('queryParams');
+    const paramDiv = document.createElement('div');
+    paramDiv.className = 'row mb-2';
+    paramDiv.innerHTML = `
+        <div class="col-md-4">
+            <input type="text" class="form-control form-control-sm" placeholder="Parameter name" value="${name}">
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control form-control-sm" placeholder="${placeholder}">
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    queryParamsDiv.appendChild(paramDiv);
+}
+
+function updateRequestBodyExample() {
+    const endpoint = document.getElementById('apiEndpoint').value;
+    const method = document.getElementById('httpMethod').value;
+    const requestBodyTextarea = document.getElementById('requestBody');
+    
+    let example = '';
+    
+    if (endpoint === '/api/v1/cart/' && method === 'POST') {
+        example = JSON.stringify({
+            "product_id": 1,
+            "quantity": 2
+        }, null, 2);
+    } else if (endpoint.includes('/api/v1/cart/') && method === 'PUT') {
+        example = JSON.stringify({
+            "quantity": 3
+        }, null, 2);
+    } else if (endpoint === '/api/v1/payment/create-intent' && method === 'POST') {
+        example = JSON.stringify({
+            "amount": 29.99
+        }, null, 2);
+    }
+    
+    requestBodyTextarea.value = example;
+}
+
+// Send API request
+document.getElementById('sendRequest').addEventListener('click', sendApiRequest);
+
+async function sendApiRequest() {
+    const method = document.getElementById('httpMethod').value;
+    let endpoint = document.getElementById('apiEndpoint').value;
+    const requestBody = document.getElementById('requestBody').value;
+    const responseElement = document.getElementById('apiResponse');
+    const statusElement = document.getElementById('responseStatus');
+    const timeElement = document.getElementById('responseTime');
+    const headersElement = document.getElementById('responseHeaders');
+    const headersContentElement = document.getElementById('responseHeadersContent');
+    
+    // Build query string
+    const queryParams = [];
+    const paramRows = document.querySelectorAll('#queryParams .row');
+    paramRows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        if (inputs[0].value && inputs[1].value) {
+            queryParams.push(`${encodeURIComponent(inputs[0].value)}=${encodeURIComponent(inputs[1].value)}`);
+        }
+    });
+    
+    if (queryParams.length > 0) {
+        endpoint += (endpoint.includes('?') ? '&' : '?') + queryParams.join('&');
+    }
+    
+    // Update UI
+    statusElement.textContent = 'Loading...';
+    statusElement.className = 'badge bg-warning';
+    responseElement.textContent = 'Sending request...';
+    timeElement.style.display = 'none';
+    headersElement.style.display = 'none';
+    
+    requestStartTime = Date.now();
+    
+    try {
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        
+        if ((method === 'POST' || method === 'PUT') && requestBody.trim()) {
+            options.body = requestBody;
+        }
+        
+        const response = await fetch(endpoint, options);
+        const responseTime = Date.now() - requestStartTime;
+        
+        // Update status
+        statusElement.textContent = `${response.status} ${response.statusText}`;
+        statusElement.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+        
+        // Show response time
+        timeElement.textContent = `${responseTime}ms`;
+        timeElement.style.display = 'inline';
+        
+        // Show headers
+        const headers = {};
+        response.headers.forEach((value, key) => {
+            headers[key] = value;
+        });
+        headersContentElement.textContent = JSON.stringify(headers, null, 2);
+        headersElement.style.display = 'block';
+        
+        // Get response body
+        const contentType = response.headers.get('content-type');
+        let responseData;
+        
+        if (contentType && contentType.includes('application/json')) {
+            responseData = await response.json();
+            responseElement.textContent = JSON.stringify(responseData, null, 2);
+            responseElement.className = 'bg-dark text-light p-3';
+        } else {
+            responseData = await response.text();
+            responseElement.textContent = responseData;
+            responseElement.className = 'bg-dark text-light p-3';
+        }
+        
+    } catch (error) {
+        statusElement.textContent = 'Error';
+        statusElement.className = 'badge bg-danger';
+        responseElement.textContent = `Error: ${error.message}`;
+        responseElement.className = 'bg-dark text-danger p-3';
+        
+        const responseTime = Date.now() - requestStartTime;
+        timeElement.textContent = `${responseTime}ms`;
+        timeElement.style.display = 'inline';
+    }
+}
+
+// Quick test functions
+async function quickTest(endpoint, method, body = null) {
+    document.getElementById('apiEndpoint').value = endpoint;
+    document.getElementById('httpMethod').value = method;
+    
+    if (body) {
+        document.getElementById('requestBody').value = JSON.stringify(body, null, 2);
+    }
+    
+    updateUIForMethod();
+    await sendApiRequest();
+}
+
+async function quickTestAddToCart() {
+    const body = {
+        "product_id": 1,
+        "quantity": 1
+    };
+    await quickTest('/api/v1/cart/', 'POST', body);
+}
+
+// Initialize UI
+updateUIForMethod();
+updateQueryParams();
+</script>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#apiResponse {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.badge {
+    font-size: 0.8em;
+}
+
+.quick-test-card {
+    transition: transform 0.2s;
+}
+
+.quick-test-card:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

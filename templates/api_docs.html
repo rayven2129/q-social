@@ -9,11 +9,16 @@
             <h1 class="mb-4">🚀 E-Commerce API Documentation</h1>
             
             <div class="alert alert-info">
-                <h5><i class="fas fa-info-circle"></i> Interactive API Documentation</h5>
-                <p class="mb-2">Access the full interactive Swagger UI documentation:</p>
-                <a href="/api/docs/" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-external-link-alt"></i> Open Swagger UI
-                </a>
+                <h5><i class="fas fa-info-circle"></i> API Testing Options</h5>
+                <p class="mb-2">Choose your preferred way to test the API:</p>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('api_test_interface') }}" class="btn btn-primary">
+                        <i class="fas fa-flask"></i> Interactive Testing Interface
+                    </a>
+                    <a href="/api/v1/docs/" class="btn btn-outline-primary" target="_blank">
+                        <i class="fas fa-book"></i> Simple Documentation
+                    </a>
+                </div>
             </div>
 
             <div class="row">
