@@ -113,8 +113,7 @@ Thumbs.db
 logs
 *.log
 
-# Environment variables
-.env
+# Environment variables (keeping .env tracked for local migration)
 .env.local
 .env.development.local
 .env.test.local
